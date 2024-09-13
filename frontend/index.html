@@ -42,6 +42,7 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
         .category::before {
             content: "";
@@ -68,6 +69,46 @@
         .category p {
             color: #666666;
         }
+        #categoryView {
+            display: none;
+        }
+        .post {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        .post h3 {
+            margin-top: 0;
+        }
+        .post-meta {
+            font-size: 0.8em;
+            color: #666;
+        }
+        #newPostForm {
+            margin-top: 20px;
+        }
+        #newPostForm input, #newPostForm textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        #newPostForm button {
+            background-color: #00ff00;
+            color: #333;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        #backButton {
+            margin-bottom: 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -76,35 +117,24 @@
             <h1>H4ck3r F0rum v2.0</h1>
         </header>
         <main>
-            <div class="categories" id="categoryContainer">
-                <!-- Categories will be dynamically added here -->
+            <div id="categoriesView">
+                <div class="categories" id="categoryContainer">
+                    <!-- Categories will be dynamically added here -->
+                </div>
+            </div>
+            <div id="categoryView">
+                <button id="backButton">Back to Categories</button>
+                <h2 id="categoryTitle"></h2>
+                <div id="posts"></div>
+                <form id="newPostForm">
+                    <input type="text" id="postTitle" placeholder="Post Title" required>
+                    <input type="text" id="postAuthor" placeholder="Your Name" required>
+                    <textarea id="postBody" placeholder="Post Content" required></textarea>
+                    <button type="submit">Add Post</button>
+                </form>
             </div>
         </main>
     </div>
-
-    <script>
-        const categories = [
-            { name: "Red Team", description: "Offensive security techniques and strategies" },
-            { name: "Pen Testing", description: "Penetration testing methodologies and tools" },
-            { name: "Blue Team", description: "Defensive security and incident response" },
-            { name: "Cryptography", description: "Encryption, decryption, and secure communication" },
-            { name: "Social Engineering", description: "Human-focused security exploitation" },
-            { name: "Malware Analysis", description: "Studying and reverse engineering malicious software" },
-            { name: "Web Security", description: "Vulnerabilities and security in web applications" },
-            { name: "Network Security", description: "Protecting and securing computer networks" }
-        ];
-
-        const categoryContainer = document.getElementById('categoryContainer');
-
-        categories.forEach(category => {
-            const categoryElement = document.createElement('div');
-            categoryElement.classList.add('category');
-            categoryElement.innerHTML = `
-                <h2>${category.name}</h2>
-                <p>${category.description}</p>
-            `;
-            categoryContainer.appendChild(categoryElement);
-        });
-    </script>
+    <script src="index.js"></script>
 </body>
 </html>

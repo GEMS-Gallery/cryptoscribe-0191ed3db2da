@@ -1,14 +1,14 @@
-import Func "mo:base/Func";
+import Hash "mo:base/Hash";
 import Int "mo:base/Int";
-import Text "mo:base/Text";
 
 import Array "mo:base/Array";
 import Time "mo:base/Time";
 import List "mo:base/List";
+import HashMap "mo:base/HashMap";
+import Iter "mo:base/Iter";
+import Text "mo:base/Text";
 
 actor {
-  // The backend code is kept as-is for potential future use
-  // Define the Post type
   public type Post = {
     title: Text;
     body: Text;
@@ -16,22 +16,55 @@ actor {
     timestamp: Int;
   };
 
-  // Use a stable variable to store posts
-  stable var posts : List.List<Post> = List.nil();
+  public type Category = {
+    name: Text;
+    description: Text;
+  };
 
-  // Function to add a new post
-  public func addPost(title: Text, body: Text, author: Text) : async () {
+  let categories : [Category] = [
+    { name = "Red Team"; description = "Offensive security techniques and strategies" },
+    { name = "Pen Testing"; description = "Penetration testing methodologies and tools" },
+    { name = "Blue Team"; description = "Defensive security and incident response" },
+    { name = "Cryptography"; description = "Encryption, decryption, and secure communication" },
+    { name = "Social Engineering"; description = "Human-focused security exploitation" },
+    { name = "Malware Analysis"; description = "Studying and reverse engineering malicious software" },
+    { name = "Web Security"; description = "Vulnerabilities and security in web applications" },
+    { name = "Network Security"; description = "Protecting and securing computer networks" }
+  ];
+
+  stable var postEntries : [(Text, List.List<Post>)] = [];
+  var posts = HashMap.fromIter<Text, List.List<Post>>(postEntries.vals(), 10, Text.equal, Text.hash);
+
+  public func addPost(category: Text, title: Text, body: Text, author: Text) : async () {
     let newPost : Post = {
       title = title;
       body = body;
       author = author;
       timestamp = Time.now();
     };
-    posts := List.push(newPost, posts);
+    let categoryPosts = switch (posts.get(category)) {
+      case (null) { List.nil<Post>() };
+      case (?existingPosts) { existingPosts };
+    };
+    posts.put(category, List.push(newPost, categoryPosts));
   };
 
-  // Function to get all posts
-  public query func getPosts() : async [Post] {
-    List.toArray(posts)
+  public query func getPosts(category: Text) : async [Post] {
+    switch (posts.get(category)) {
+      case (null) { [] };
+      case (?categoryPosts) { List.toArray(categoryPosts) };
+    };
+  };
+
+  public query func getCategories() : async [Category] {
+    categories
+  };
+
+  system func preupgrade() {
+    postEntries := Iter.toArray(posts.entries());
+  };
+
+  system func postupgrade() {
+    posts := HashMap.fromIter<Text, List.List<Post>>(postEntries.vals(), 10, Text.equal, Text.hash);
   };
 }
