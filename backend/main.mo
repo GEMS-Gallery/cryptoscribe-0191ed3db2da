@@ -7,6 +7,7 @@ import Time "mo:base/Time";
 import List "mo:base/List";
 
 actor {
+  // The backend code is kept as-is for potential future use
   // Define the Post type
   public type Post = {
     title: Text;
